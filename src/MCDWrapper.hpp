@@ -30,7 +30,7 @@
 #include	<cstring>
 #include	<vector>
 #include	<algorithm>
-#include <windows.h>
+//#include <windows.h>
 /************************************************************************/
 /* Includes for the OpenCV                                              */
 /************************************************************************/
@@ -75,9 +75,6 @@ class MCDWrapper {
 /*  Methods								                                */
 /************************************************************************/
  public:
-
-	 MCDWrapper();
-	~MCDWrapper();
 
 	void Init(cv::Mat in_imgIpl);
 	void Run();

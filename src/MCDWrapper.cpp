@@ -47,13 +47,6 @@ int gettimeofday(struct timeval *tp, int *tz)
 #include <sys/time.h>
 #endif
 
-MCDWrapper::MCDWrapper()
-{
-}
-
-MCDWrapper::~MCDWrapper()
-{
-}
 
 void
  MCDWrapper::Init(cv::Mat in_imgIpl)
@@ -105,7 +98,7 @@ void MCDWrapper::Run()
 	// Calculate Backward homography
 	// Get H
 	double h[9];
-	m_LucasKanade.RunTrack(imgGray, cv::Mat());
+	m_LucasKanade.RunTrack(imgGray, imgGrayPrev);
 	m_LucasKanade.GetHomography(h);
 	BGModel.motionCompensate(h);
 
@@ -146,7 +139,6 @@ void MCDWrapper::Run()
 	// }
 
 	imgGray.copyTo(imgGrayPrev);
-	cv::waitKey(10);
 
 }
 

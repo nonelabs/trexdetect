@@ -171,8 +171,6 @@ class ProbModel {
 		int curModelWidth = modelWidth;
 		int curModelHeight = modelHeight;
 
-		BYTE *pCur = (BYTE *) m_Cur.data;
-
 		int obsWidthStep = m_Cur.step;
 
 		// compensate models for the current view
@@ -381,7 +379,6 @@ class ProbModel {
 		int curModelWidth = modelWidth;
 		int curModelHeight = modelHeight;
 
-		BYTE *pCur = (BYTE *) m_Cur.data;
 
 		int obsWidthStep = m_Cur.step;
 
@@ -409,7 +406,7 @@ class ProbModel {
 						if (idx_i < 0 || idx_i >= obsWidth || idx_j < 0 || idx_j >= obsHeight)
 							continue;
 
-						cur_mean += pCur[idx_i + idx_j * obsWidthStep];
+						cur_mean += m_Cur.data[idx_i + idx_j * obsWidthStep];
 						elem_cnt += 1.0;
 					}
 				}	//loop for pixels
@@ -484,7 +481,7 @@ class ProbModel {
 						if (idx_i < 0 || idx_i >= obsWidth || idx_j < 0 || idx_j >= obsHeight)
 							continue;
 
-						obs_mean[nMatchIdx] += pCur[idx_i + idx_j * obsWidthStep];
+						obs_mean[nMatchIdx] += m_Cur.data[idx_i + idx_j * obsWidthStep];
 						++nElemCnt[nMatchIdx];
 					}
 				}
@@ -536,12 +533,12 @@ class ProbModel {
 						}
 
 						float pixelDist = 0.0;
-						float fDiff = pCur[idx_i + idx_j * obsWidthStep] - m_Mean[nMatchIdx][bIdx_i + bIdx_j * modelWidth];
+						float fDiff = m_Cur.data[idx_i + idx_j * obsWidthStep] - m_Mean[nMatchIdx][bIdx_i + bIdx_j * modelWidth];
 						pixelDist += pow(fDiff, (int)2);
 
-						m_DistImg[idx_i + idx_j * obsWidthStep] = pow(pCur[idx_i + idx_j * obsWidthStep] - m_Mean[0][bIdx_i + bIdx_j * modelWidth], (int)2);
+						m_DistImg[idx_i + idx_j * obsWidthStep] = pow(m_Cur.data[idx_i + idx_j * obsWidthStep] - m_Mean[0][bIdx_i + bIdx_j * modelWidth], (int)2);
 
-						if (pOutputImg.empty() && m_Age_Temp[0][bIdx_i + bIdx_j * modelWidth] > 1) {
+						if (!pOutputImg.empty() && m_Age_Temp[0][bIdx_i + bIdx_j * modelWidth] > 1) {
 
 							BYTE valOut = m_DistImg[idx_i + idx_j * obsWidthStep] > VAR_THRESH_FG_DETERMINE * m_Var_Temp[0][bIdx_i + bIdx_j * modelWidth] ? 255 : 0;
 
@@ -578,7 +575,6 @@ class ProbModel {
 				}
 			}
 		}
-
 	}
 
 };

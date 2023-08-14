@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
 
 	char test_file[100];
 	char abs_file[1000];
-    std::cout << "Hello";
 
 	if (argc != 3) {
 		printf("Usage: Binary [VideoFileFullPathWithExt] [bool DumpOutputImgs (1/0)]\n");
@@ -83,7 +82,7 @@ int main(int argc, char *argv[])
 	mp4file_name.append(".mp4");
 
 	// Initialize capture
-	cv::VideoCapture capture("woman.mp4");
+	cv::VideoCapture capture("video1.webm");
 	if(!capture.isOpened()) {
 		std::cerr << "Error: Could not open video file!" << std::endl;
 		return -1;
@@ -122,15 +121,43 @@ int main(int argc, char *argv[])
 		}
 
 		// Display detection results as overlay
-		for (int j = 0; j < frame_copy.cols; ++j) {
-			for (int i = 0; i < frame_copy.rows; ++i) {
+        cv::Mat thresholded;
+        cv::threshold(mcdwrapper->detect_img, thresholded, 1, 255, cv::THRESH_BINARY);
+        // Find contours (blobs)
+        std::vector<std::vector<cv::Point>> contours;
+        std::vector<cv::Vec4i> hierarchy;
+        cv::findContours(thresholded, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        double minAreaSize = 10; // You can adjust this value
+        double maxAreaSize = 4000; // You can adjust this value
+
+        // Remove small blobs by filling them with black color
+        for (size_t i = 0; i < contours.size(); i++) {
+            if (cv::contourArea(contours[i]) < minAreaSize || cv::contourArea(contours[i]) > maxAreaSize) {
+                cv::drawContours(thresholded, contours, (int)i, cv::Scalar(0), -1, cv::LINE_8, hierarchy, 0);
+            }
+        }
+
+        cv::findContours(thresholded, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        cv::Mat result = thresholded.clone();
+        result.setTo(0);
+        for (size_t i = 0; i < contours.size(); i++) {
+            cv::Rect boundingBox = cv::boundingRect(contours[i]);
+            std::cout << boundingBox.area();
+            cv::rectangle(result, boundingBox, 1, 2);
+        }
+
+
+
+		for (int j = 0; j < frame_copy.rows; ++j) {
+			for (int i = 0; i < frame_copy.cols; ++i) {
 
 				float draw_orig = 0.5;
 
-				BYTE *pMaskImg = (BYTE *) (mcdwrapper->detect_img.data);
 				int widthstepMsk = mcdwrapper->detect_img.step;
 
-				int mask_data = pMaskImg[i + j * widthstepMsk];
+				//int mask_data = mcdwrapper->detect_img.data[i + j * widthstepMsk];
+                int mask_data = thresholded.data[i + j * widthstepMsk];
+
 
 				((BYTE *) (frame_copy.data))[i * 3 + j * frame_copy.step + 2] = draw_orig * ((BYTE *) (frame_copy.data))[i * 3 + j * frame_copy.step + 2];
 				((BYTE *) (frame_copy.data))[i * 3 + j * frame_copy.step + 1] = draw_orig * ((BYTE *) (frame_copy.data))[i * 3 + j * frame_copy.step + 1];
@@ -143,12 +170,12 @@ int main(int argc, char *argv[])
 			}
 		}
 
-        cv::imshow("Video", frame);
+        cv::imshow("Video", frame_copy);
+        cv::waitKey(1);
 
 		// // DISPLAY---- and write to png
 		// cvWriteFrame(pVideoOut, frame_copy);
 
-		if (atoi((char *)(argv[2])) > 0 && frame_num >= 1) {
 
 			for (int j = 0; j < frame_copy.cols; ++j) {
 				for (int i = 0; i < frame_copy.rows; ++i) {
@@ -169,8 +196,6 @@ int main(int argc, char *argv[])
 			char bufbuf[1000];
 			sprintf(bufbuf, "./results/%s_frm%05d.png", test_file, frame_num);
             cv::imwrite(bufbuf, frame_copy);
-		}
-        cv::waitKey(1000);
 		++frame_num;
 
 	}

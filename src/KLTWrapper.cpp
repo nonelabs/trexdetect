@@ -56,11 +56,11 @@ void KLTWrapper::Init(cv::Mat imgGray)
 	maskimg = cv::Mat(imgGray.size(), CV_8UC1);
 
 	// Gen mask
-	BYTE *pMask = (BYTE *) maskimg.data;
+	//BYTE *pMask = (BYTE *) maskimg.data;
 	int widthStep = maskimg.step;
 	for (int j = 0; j < nj; ++j) {
 		for (int i = 0; i < ni; ++i) {
-			pMask[i + j * widthStep] = (i >= ni / 5) && (i <= ni * 4 / 5) && (j >= nj / 5) && (j <= nj * 4 / 5) ? (BYTE) 255 : (BYTE) 255;
+			maskimg.data[i + j * widthStep] = (i >= ni / 5) && (i <= ni * 4 / 5) && (j >= nj / 5) && (j <= nj * 4 / 5) ? (BYTE) 255 : (BYTE) 255;
 		}
 	}
 

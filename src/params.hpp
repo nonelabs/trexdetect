@@ -26,13 +26,13 @@
 #define BLOCK_SIZE_SQR				(16.0)
 #define VARIANCE_INTERPOLATE_PARAM	        (1.0)
 
-#define MAX_BG_AGE				(30.0)
+#define MAX_BG_AGE				(3.0)
 #define VAR_MIN_NOISE_T			        (50.0*50.0)
 #define VAR_DEC_RATIO			        (0.001)
-#define MIN_BG_VAR				(5.0*5.0)	//15*15
-#define INIT_BG_VAR				(20.0*20.0)	//15*15
+#define MIN_BG_VAR				(15.0*15.0)	//15*15
+#define INIT_BG_VAR				(15.0*15.0)	//15*15
 
-#define NUM_MODELS		        (2)
+#define NUM_MODELS		        (3)
 #define VAR_THRESH_FG_DETERMINE		(4.0)
 #define VAR_THRESH_MODEL_MATCH		(2.0)
 #endif				// _PARAMS_H_

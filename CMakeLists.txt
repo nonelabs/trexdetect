@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD 11)
 SET (PROJECT_NAME "fastMCD")
 project(${PROJECT_NAME})
 
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+include_directories(${PROTOBUF_INCLUDE_DIR})
 find_package(OpenCV REQUIRED) # core imgproc highgui flann video calib3d nonfree objdetect)
 
 message(STATUS "OpenCV libraries: ${OpenCV_LIBRARIES}")
@@ -19,7 +22,7 @@ file(GLOB "FILES" "src/*.cpp")
 set( SRCS src/main.cpp ${FILES})
 
 add_executable(${PROJECT_NAME} ${SRCS} )
-target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBRARIES} )
+target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBRARIES} ${PROTOBUF_LIBRARY} )
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # Find includes in corresponding build directories
